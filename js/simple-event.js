@@ -15,35 +15,44 @@ var SimpleEvent = SimpleEvent || {};
 		},
 
 		off: function(target, name, callback) {
-			var result = this.events;
+			var self = this;
+			var index;
 
-			for (var index in this.events) {
-				var event = this.events[index];
+			for (var i = 0; i < this.events.length; i++) {
+				var event = this.events[i];
 
-				if (
-					event.target === target &&
-					event.name === name
-				) {
-					result.splice(index, 1);
-				}
+				this.eventMatched(event, [target, name, callback], function(){
+					self.events.splice(i, 1);
+					i--;
+				});
 			}
-
-			this.events = result;
 		},
 
 		trigger: function(target, name) {
 			for (var index in this.events) {
 				var event = this.events[index];
-				if (
-					event.target === target &&
-					event.name === name
-				) {
-					event.callback();
+				this.eventMatched(event, [target, name], function(){
+					event.callback.apply(event, Array.prototype.slice.call(args, 1));
+				});
+			}
+		},
+
+		eventMatched: function(event, matchEvent, callback) {
+			if (
+				event.target === matchEvent[0] &&
+				event.name === matchEvent[1]
+			) {
+				if (matchEvent[2]) {
+					if (matchEvent[2] === event.callback) {
+						callback();
+					}
+				} else {
+					callback();
 				}
 			}
 		},
 
-		clear: function() {
+		reset: function() {
 			this.events = [];
 		}
 	};
