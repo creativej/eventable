@@ -1,9 +1,11 @@
-var SimpleEvent = SimpleEvent || {};
-
 (function(){
 	"use strict";
 
-	SimpleEvent = {
+	var root = this;
+
+	root.SimpleEvent = root.SimpleEvent || {};
+
+	root.SimpleEvent = {
 		events: [],
 
 		on: function(target, name, callback) {
