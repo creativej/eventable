@@ -30,11 +30,14 @@
 			}
 		},
 
-		trigger: function(target, name) {
+		emit: function(target, name) {
+			var args = arguments;
+
 			for (var index in this.events) {
 				var event = this.events[index];
+
 				this.eventMatched(event, [target, name], function(){
-					event.callback.apply(event, Array.prototype.slice.call(args, 1));
+					event.callback.apply(event, Array.prototype.slice.call(args, 2));
 				});
 			}
 		},
@@ -58,5 +61,4 @@
 			this.events = [];
 		}
 	};
-}());
-
+}).call(this);

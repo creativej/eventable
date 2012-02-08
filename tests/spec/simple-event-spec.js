@@ -50,11 +50,11 @@ describe("simple event", function() {
 		expect(SimpleEvent.events.length).toEqual(1);
 	});
 
-	it("should trigger an event", function() {
+	it("should emit an event", function() {
 		var target = {
 			changed: false,
 			change: function(){
-				SimpleEvent.trigger(this, 'change');
+				SimpleEvent.emit(this, 'change');
 			}
 		};
 
@@ -67,5 +67,26 @@ describe("simple event", function() {
 		target.change();
 
 		expect(target.changed).toEqual(true);
+	});
+
+	it("should emit an event with parameters", function() {
+		var target = {
+			changed: false,
+			value: '',
+			change: function(){
+				SimpleEvent.emit(this, 'change', 'x', 'y', 'z');
+			}
+		};
+
+		expect(target.changed).toEqual(false);
+
+		SimpleEvent.on(target, "change", function(x, y, z){
+			target.changed = true;
+			target.value = x + y + z;
+		});
+
+		target.change();
+
+		expect(target.value).toEqual('xyz');
 	});
 });
