@@ -1,43 +1,71 @@
 describe("simple event", function() {
 
 	beforeEach(function() {
-		SimpleEvent.clear();
+		SimpleEvent.reset();
 	});
 
 	it("should add event handler to a list", function() {
-		expect(SimpleEvent.list.length).toEqual(0);
+		expect(SimpleEvent.events.length).toEqual(0);
 
 		SimpleEvent.on({}, "change", function(){ });
 
-		expect(SimpleEvent.list.length).toEqual(1);
+		expect(SimpleEvent.events.length).toEqual(1);
+
+		SimpleEvent.on({}, "change", function(){ var test; });
+
+		expect(SimpleEvent.events.length).toEqual(2);
 	});
 
-	it("should remove event handler from a list", function() {
-		var obj = {};
+	it("should remove event handlers from a list", function() {
+		var target = {};
 
-		SimpleEvent.on(obj, "change", function(){});
+		SimpleEvent.on(target, "change", function(){ var test; });
+		SimpleEvent.on(target, "change", function(){});
 
-		SimpleEvent.off(obj, "change");
+		SimpleEvent.off(target, "change");
 
-		expect(SimpleEvent.list.length).toEqual(0);
+		expect(SimpleEvent.events.length).toEqual(0);
+	});
+
+	it("should remove all event handlers", function() {
+		var target = {};
+
+		SimpleEvent.on(target, "change", function(){ var test; });
+		SimpleEvent.on(target, "change", function(){});
+
+		SimpleEvent.off(target, "change");
+
+		expect(SimpleEvent.events.length).toEqual(0);
+	});
+
+	it("should remove event handler from a list with callback", function() {
+		var target = {};
+		var testFunc = function () {};
+
+		SimpleEvent.on(target, "change", function(){ var test; });
+		SimpleEvent.on(target, "change", testFunc);
+
+		SimpleEvent.off(target, "change", testFunc);
+
+		expect(SimpleEvent.events.length).toEqual(1);
 	});
 
 	it("should trigger an event", function() {
-		var obj = {
+		var target = {
 			changed: false,
 			change: function(){
 				SimpleEvent.trigger(this, 'change');
 			}
 		};
 
-		expect(obj.changed).toEqual(false);
+		expect(target.changed).toEqual(false);
 
-		SimpleEvent.on(obj, "change", function(){
-			obj.changed = true;
+		SimpleEvent.on(target, "change", function(){
+			target.changed = true;
 		});
 
-		obj.change();
+		target.change();
 
-		expect(obj.changed).toEqual(true);
+		expect(target.changed).toEqual(true);
 	});
 });
