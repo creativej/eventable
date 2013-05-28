@@ -25,7 +25,7 @@
 		};
 
 		obj.off = function(name, fn) {
-			if(!(name in events)) { return; }
+			if(!events[name]) { return; }
 			if (fn) {
 				events[name].splice(events[name].indexOf(fn), 1);
 			} else {
@@ -35,7 +35,7 @@
 		};
 
 		obj.trigger = function(name) {
-			if(!(name in events)) { return; }
+			if(!events[name]) { return; }
 
 			for(var i = 0; i < events[name].length; i++){
 				events[name][i].apply(this, Array.prototype.slice.call(arguments, 1));
